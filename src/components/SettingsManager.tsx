@@ -64,7 +64,7 @@ export function SettingsManager() {
         entityType: "settings",
         entityId: "invoice",
         entityName: "Invoice Settings",
-        details: `Settings updated by ${auth.currentUser?.email}`
+        details: `Settings updated by Admin`
       });
       alert("設定を保存しました。");
     } catch (error: any) {

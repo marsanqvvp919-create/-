@@ -47,85 +47,10 @@ import { SettingsManager } from "./components/SettingsManager";
 import { Settings } from "lucide-react";
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [user] = useState<any>({ displayName: "Admin", email: "admin@example.com", photoURL: "" });
   const [currentView, setCurrentView] = useState<ViewState>("dashboard");
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogin = async () => {
-    if (isLoggingIn) return;
-    setIsLoggingIn(true);
-    try {
-      await signInWithGoogle();
-    } catch (error: any) {
-      // Ignore common popup errors that don't need UI feedback
-      if (error.code === 'auth/cancelled-popup-request') {
-        console.warn('Login request already in progress');
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        console.log('User closed the popup');
-      } else {
-        console.error('Login error:', error);
-      }
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-zinc-50">
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="w-8 h-8 border-2 border-zinc-900 border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 p-6">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-zinc-200 text-center"
-        >
-          <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-6">
-            <FileText className="text-white w-8 h-8" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight mb-2">請求管理システム</h1>
-          <p className="text-zinc-500 mb-8">クリニックへの分配とマスター請求書を管理するためにログインしてください。</p>
-          <button
-            onClick={handleLogin}
-            disabled={isLoggingIn}
-            className={cn(
-              "w-full flex items-center justify-center gap-3 bg-zinc-900 text-white px-6 py-4 rounded-xl font-medium transition-all active:scale-[0.98]",
-              isLoggingIn ? "opacity-70 cursor-not-allowed" : "hover:bg-zinc-800"
-            )}
-          >
-            {isLoggingIn ? (
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-              />
-            ) : "Googleでログイン"}
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
 
   const navigateToInvoice = (id: string) => {
     setSelectedInvoiceId(id);
@@ -223,17 +148,7 @@ export default function App() {
           </div>
         </nav>
 
-        <div className="p-4 border-t border-stone-200 shrink-0">
-          <button
-            onClick={logout}
-            className={cn(
-              "w-full flex items-center gap-3 px-3 py-3 rounded-xl text-stone-500 hover:text-rose-600 hover:bg-rose-50 transition-all",
-              !isSidebarOpen && "justify-center"
-            )}
-          >
-            <LogOut className="w-5 h-5" />
-            {isSidebarOpen && <span className="font-medium text-sm">ログアウト</span>}
-          </button>
+        <div className="p-4 border-t border-stone-200 shrink-0 text-center">
           {isSidebarOpen && <div className="mt-4 text-[10px] text-stone-400 text-center font-mono uppercase tracking-widest">v1.2.4 (MVP)</div>}
         </div>
       </aside>
@@ -247,14 +162,6 @@ export default function App() {
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          
-          <div className="ml-auto flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-stone-900">{user.displayName}</p>
-              <p className="text-xs text-stone-400">{user.email}</p>
-            </div>
-            <img src={user.photoURL || ""} alt="" className="w-10 h-10 rounded-full border border-stone-200 shadow-sm" />
-          </div>
         </header>
 
         <div className="p-8 max-w-6xl mx-auto">

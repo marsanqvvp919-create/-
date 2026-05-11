@@ -24,13 +24,14 @@ interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType | string, path: string | null) {
+  const user = auth.currentUser;
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
+      userId: user?.uid || "anonymous",
+      email: user?.email || "anonymous",
+      emailVerified: user?.emailVerified || false,
+      isAnonymous: user?.isAnonymous || true,
     },
     operationType,
     path
@@ -47,8 +48,7 @@ export async function logAction(params: {
   details?: string;
 }) {
   const user = auth.currentUser;
-  if (!user) return;
-
+  
   try {
     await addDoc(collection(db, "auditLogs"), {
       action: params.action,
@@ -56,8 +56,8 @@ export async function logAction(params: {
       entityId: params.entityId,
       entityName: params.entityName || "",
       details: params.details || "",
-      userId: user.uid,
-      userEmail: user.email || "unknown",
+      userId: user?.uid || "admin-system",
+      userEmail: user?.email || "admin@example.com",
       timestamp: new Date().toISOString(), 
       serverTime: serverTimestamp() 
     });
