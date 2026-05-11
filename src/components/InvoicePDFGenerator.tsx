@@ -102,18 +102,18 @@ export const InvoicePDFTemplate = ({ invoice, allocation, clinic, masterClinic, 
         </div>
 
         {/* Sender Info - Right aligned */}
-        <div className="w-[85mm] text-left relative flex flex-col items-start pl-8">
+        <div className="w-[85mm] text-left relative flex flex-col items-start pl-4" id="sender-info-alloc">
           {settings.companyLogoUrl && (
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <img 
                 src={settings.companyLogoUrl} 
-                className="max-w-[140px] h-auto object-contain"
+                className="max-w-[160px] h-auto object-contain"
                 alt="Logo"
               />
             </div>
           )}
-          <div className="text-[9pt] space-y-0.5 leading-tight relative z-10 text-stone-700">
-            <p className="font-bold text-[10pt] mb-1 text-black">{settings.companyName}</p>
+          <div className="text-[9pt] space-y-1 leading-tight relative z-10 text-stone-700">
+            <p className="font-bold text-[10.5pt] mb-1 text-black">{settings.companyName}</p>
             <p>〒{settings.companyAddress.match(/\d{3}-?\d{4}/)?.[0] || ""}</p>
             <p>{settings.companyAddress.replace(/\d{3}-?\d{4}/, "").replace(/〒/, "").trim()}</p>
             {settings.companyTel && <p>TEL: {settings.companyTel}</p>}
@@ -124,7 +124,7 @@ export const InvoicePDFTemplate = ({ invoice, allocation, clinic, masterClinic, 
           {settings.companySealUrl && (
             <img 
               src={settings.companySealUrl} 
-              className="absolute right-0 top-6 w-[70px] h-[70px] object-contain rotate-[-5deg] pointer-events-none opacity-80 mix-blend-multiply"
+              className="absolute right-2 top-14 w-[68px] h-[68px] object-contain rotate-[-5deg] pointer-events-none opacity-85 mix-blend-multiply"
               alt="Seal"
               style={{ zIndex: 20 }}
             />
@@ -277,18 +277,18 @@ const MasterInvoiceSummaryTemplate = ({ invoice, masterClinic, settings }: Maste
         </div>
 
         {/* Sender Info - Right aligned */}
-        <div className="w-[85mm] text-left relative flex flex-col items-start pl-8">
+        <div className="w-[85mm] text-left relative flex flex-col items-start pl-4" id="sender-info-master">
           {settings.companyLogoUrl && (
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <img 
                 src={settings.companyLogoUrl} 
-                className="max-w-[140px] h-auto object-contain"
+                className="max-w-[160px] h-auto object-contain"
                 alt="Logo"
               />
             </div>
           )}
-          <div className="text-[9pt] space-y-0.5 leading-tight relative z-10 text-stone-700">
-            <p className="font-bold text-[10pt] mb-1 text-black">{settings.companyName}</p>
+          <div className="text-[9pt] space-y-1 leading-tight relative z-10 text-stone-700">
+            <p className="font-bold text-[10.5pt] mb-1 text-black">{settings.companyName}</p>
             <p>〒{settings.companyAddress.match(/\d{3}-?\d{4}/)?.[0] || ""}</p>
             <p>{settings.companyAddress.replace(/\d{3}-?\d{4}/, "").replace(/〒/, "").trim()}</p>
             {settings.companyTel && <p>TEL: {settings.companyTel}</p>}
@@ -299,7 +299,7 @@ const MasterInvoiceSummaryTemplate = ({ invoice, masterClinic, settings }: Maste
           {settings.companySealUrl && (
             <img 
               src={settings.companySealUrl} 
-              className="absolute right-0 top-6 w-[70px] h-[70px] object-contain rotate-[-5deg] pointer-events-none opacity-80 mix-blend-multiply"
+              className="absolute right-2 top-14 w-[68px] h-[68px] object-contain rotate-[-5deg] pointer-events-none opacity-85 mix-blend-multiply"
               alt="Seal"
               style={{ zIndex: 20 }}
             />
