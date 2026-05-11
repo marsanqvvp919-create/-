@@ -1,0 +1,142 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A formulation or product available for allocation",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "origin": { "type": "string" },
+        "category": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "origin", "isActive"]
+    },
+    "Clinic": {
+      "title": "Clinic",
+      "description": "A clinic that receives allocations",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "contactPerson": { "type": "string" },
+        "salesPerson": { "type": "string" },
+        "address": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
+    },
+    "MasterInvoice": {
+      "title": "MasterInvoice",
+      "description": "A master invoice from a supplier",
+      "type": "object",
+      "properties": {
+        "invoiceNumber": { "type": "string" },
+        "supplier": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["draft", "completed"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["invoiceNumber", "supplier", "date"]
+    },
+    "InvoiceItem": {
+      "title": "InvoiceItem",
+      "description": "An item (product) within a master invoice with its total quantity",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "quantity": { "type": "number" }
+      },
+      "required": ["productId", "quantity"]
+    },
+    "Allocation": {
+      "title": "Allocation",
+      "description": "An allocation of a product to a specific clinic",
+      "type": "object",
+      "properties": {
+        "clinicId": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unitPrice": { "type": "number" }
+      },
+      "required": ["clinicId", "quantity", "unitPrice"]
+    },
+    "ClinicFee": {
+      "title": "ClinicFee",
+      "description": "Additional fees per clinic for a specific invoice",
+      "type": "object",
+      "properties": {
+        "shippingFee": { "type": "number" },
+        "handlingFee": { "type": "number" },
+        "notes": { "type": "string" }
+      }
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "System audit log for tracking data changes",
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "enum": ["create", "update", "delete", "import"] },
+        "entityType": { "type": "string", "enum": ["clinic", "product", "invoice", "allocation", "settings"] },
+        "entityId": { "type": "string" },
+        "entityName": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["action", "entityType", "entityId", "userId", "timestamp"]
+    },
+    "InvoiceSettings": {
+      "title": "InvoiceSettings",
+      "description": "Global configuration for invoice PDF generation",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "companyAddress": { "type": "string" },
+        "bankInfo": { "type": "string" },
+        "taxRate": { "type": "number" },
+        "footerNote": { "type": "string" },
+        "showMasterSummary": { "type": "boolean" },
+        "companySealUrl": { "type": "string" }
+      },
+      "required": ["companyName", "companyAddress"]
+    }
+  },
+  "firestore": {
+    "/settings/{settingId}": {
+      "schema": "InvoiceSettings",
+      "description": "System settings and configurations"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "System-wide activity logs"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Master list of products"
+    },
+    "/clinics/{clinicId}": {
+      "schema": "Clinic",
+      "description": "Master list of clinics"
+    },
+    "/masterInvoices/{invoiceId}": {
+      "schema": "MasterInvoice",
+      "description": "Master invoices"
+    },
+    "/masterInvoices/{invoiceId}/items/{itemId}": {
+      "schema": "InvoiceItem",
+      "description": "Items in a master invoice"
+    },
+    "/masterInvoices/{invoiceId}/items/{itemId}/allocations/{allocationId}": {
+      "schema": "Allocation",
+      "description": "Allocations of an invoice item to clinics"
+    },
+    "/masterInvoices/{invoiceId}/clinicFees/{clinicId}": {
+      "schema": "ClinicFee",
+      "description": "Fees per clinic for the invoice"
+    }
+  }
+}

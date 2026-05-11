@@ -1,0 +1,130 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // -------------------------------------------------------------------------
+    // Helper functions
+    // -------------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // -------------------------------------------------------------------------
+    // Entity Validations
+    // -------------------------------------------------------------------------
+    function isValidProduct(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+          && data.origin is string && data.origin.size() <= 100
+          && data.category is string && data.category.size() <= 100;
+    }
+
+    function isValidClinic(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+          && (data.contactPerson == null || (data.contactPerson is string && data.contactPerson.size() <= 100))
+          && (data.address == null || (data.address is string && data.address.size() <= 500));
+    }
+
+    function isValidInvoice(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 255
+          && data.masterClinicId is string && data.totalAmount is number;
+    }
+
+    function isValidSettings(data) {
+      return data.companyName is string && data.companyName.size() <= 200
+          && data.companyAddress is string && data.companyAddress.size() <= 600
+          && (data.get('bankInfo', '') is string)
+          && (data.get('taxRate', 0) is number)
+          && (data.get('footerNote', '') is string)
+          && (data.get('showMasterSummary', true) is bool)
+          && (data.get('companySealUrl', null) == null || data.get('companySealUrl', '') is string)
+          && (data.get('companyLogoUrl', null) == null || data.get('companyLogoUrl', '') is string)
+          && (data.get('bankName', null) == null || data.get('bankName', '') is string)
+          && (data.get('bankBranch', null) == null || data.get('bankBranch', '') is string)
+          && (data.get('bankAccountType', null) == null || data.get('bankAccountType', '') is string)
+          && (data.get('bankAccountNumber', null) == null || data.get('bankAccountNumber', '') is string)
+          && (data.get('bankAccountHolder', null) == null || data.get('bankAccountHolder', '') is string);
+    }
+
+    function isValidAuditLog(data) {
+      return data.userId == request.auth.uid
+          && data.action is string && data.action in ['create', 'update', 'delete', 'import']
+          && data.entityType is string && data.entityType in ['clinic', 'product', 'invoice', 'allocation', 'settings']
+          && data.entityId is string
+          && data.timestamp is string
+          && (data.userEmail == null || data.userEmail is string)
+          && (data.details == null || data.details is string)
+          && (data.entityName == null || data.entityName is string)
+          && (data.serverTime == null || data.serverTime is timestamp);
+    }
+
+    // -------------------------------------------------------------------------
+    // Rules
+    // -------------------------------------------------------------------------
+
+    // Audit Logs (Immutable)
+    match /auditLogs/{logId} {
+      allow create: if isSignedIn() && isValidAuditLog(incoming());
+      allow read: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // Products
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
+      allow update: if isSignedIn() && isValidProduct(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Clinics
+    match /clinics/{clinicId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(clinicId) && isValidClinic(incoming());
+      allow update: if isSignedIn() && isValidClinic(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Settings
+    match /settings/{settingId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isValidSettings(incoming());
+    }
+
+    // Master Invoices
+    match /masterInvoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(invoiceId) && isValidInvoice(incoming());
+      allow update: if isSignedIn() && isValidInvoice(incoming());
+      allow delete: if isSignedIn();
+
+      // Support for sub-collections (even if not currently used by app, for future-proofing and existing data)
+      match /items/{itemId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn();
+        match /allocations/{allocId} {
+          allow read, write: if isSignedIn();
+        }
+      }
+      match /clinicFees/{feeId} {
+        allow read, write: if isSignedIn();
+      }
+    }
+
+    // Default deny for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

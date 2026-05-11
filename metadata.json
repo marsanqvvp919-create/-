@@ -1,0 +1,6 @@
+{
+  "name": "請求分配・照合管理システム",
+  "description": "マスター請求書の数量を各クリニックに分配し、差異アラートをリアルタイムで表示する管理ツールです。",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
