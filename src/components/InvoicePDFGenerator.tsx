@@ -107,7 +107,7 @@ export const InvoicePDFTemplate = ({ invoice, allocation, clinic, masterClinic, 
             <div className="flex items-center gap-2 mb-2">
               <img 
                 src={settings.companyLogoUrl} 
-                className="max-w-[195px] h-auto object-contain"
+                className="max-w-[145px] h-auto object-contain"
                 alt="Logo"
               />
             </div>
@@ -124,7 +124,7 @@ export const InvoicePDFTemplate = ({ invoice, allocation, clinic, masterClinic, 
           {settings.companySealUrl && (
             <img 
               src={settings.companySealUrl} 
-              className="absolute right-0 top-[35px] w-[75px] h-[75px] object-contain rotate-[-5deg] pointer-events-none opacity-85 mix-blend-multiply"
+              className="absolute right-[-5px] top-[30px] w-[68px] h-[68px] object-contain rotate-[-5deg] pointer-events-none opacity-85 mix-blend-multiply"
               alt="Seal"
               style={{ zIndex: 20 }}
             />
@@ -282,7 +282,7 @@ const MasterInvoiceSummaryTemplate = ({ invoice, masterClinic, settings }: Maste
             <div className="flex items-center gap-2 mb-2">
               <img 
                 src={settings.companyLogoUrl} 
-                className="max-w-[195px] h-auto object-contain"
+                className="max-w-[145px] h-auto object-contain"
                 alt="Logo"
               />
             </div>
@@ -299,7 +299,7 @@ const MasterInvoiceSummaryTemplate = ({ invoice, masterClinic, settings }: Maste
           {settings.companySealUrl && (
             <img 
               src={settings.companySealUrl} 
-              className="absolute right-0 top-[35px] w-[75px] h-[75px] object-contain rotate-[-5deg] pointer-events-none opacity-85 mix-blend-multiply"
+              className="absolute right-[-5px] top-[30px] w-[68px] h-[68px] object-contain rotate-[-5deg] pointer-events-none opacity-85 mix-blend-multiply"
               alt="Seal"
               style={{ zIndex: 20 }}
             />
